@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="50%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#ec4899" />
+    </linearGradient>
+    <linearGradient id="hairGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4" />
+      <stop offset="50%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#6366f1" />
+    </linearGradient>
+    <linearGradient id="skinGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fff1eb" />
+      <stop offset="100%" stop-color="#ffd5c2" />
+    </linearGradient>
+    <linearGradient id="eyeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ec4899" />
+      <stop offset="100%" stop-color="#831843" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Colorful Background to demonstrate BG removal -->
+  <rect width="512" height="512" fill="url(#bgGrad)" />
+  <circle cx="100" cy="100" r="60" fill="#ffffff" opacity="0.1" />
+  <circle cx="420" cy="380" r="90" fill="#ffffff" opacity="0.15" />
+  <polygon points="400,80 430,120 370,120" fill="#ffffff" opacity="0.2" />
+
+  <!-- Anime Character Body / Clothes -->
+  <g id="character" filter="url(#shadow)">
+    <!-- Clothing / Collar -->
+    <path d="M180 440 L256 380 L332 440 L380 512 L132 512 Z" fill="#1e293b" />
+    <path d="M220 400 L256 460 L292 400 Z" fill="#ffffff" />
+    <path d="M246 420 L256 470 L266 420 Z" fill="#ef4444" /> <!-- Tie -->
+
+    <!-- Neck -->
+    <path d="M232 320 L280 320 L275 390 L237 390 Z" fill="#fbcfe8" />
+    <path d="M237 360 C250 375, 262 375, 275 360 L275 390 L237 390 Z" fill="#f472b6" opacity="0.2" />
+
+    <!-- Back Hair -->
+    <path d="M140 220 C100 320, 110 440, 150 490 C180 400, 170 300, 180 250 Z" fill="url(#hairGrad)" />
+    <path d="M372 220 C412 320, 402 440, 362 490 C332 400, 342 300, 332 250 Z" fill="url(#hairGrad)" />
+
+    <!-- Face Shape -->
+    <path d="M180 210 C180 150, 332 150, 332 210 C332 280, 290 340, 256 350 C222 340, 180 280, 180 210 Z" fill="url(#skinGrad)" />
+
+    <!-- Ears -->
+    <path d="M175 220 C165 220, 165 250, 180 260 Z" fill="#ffd5c2" />
+    <path d="M337 220 C347 220, 347 250, 332 260 Z" fill="#ffd5c2" />
+
+    <!-- Blush -->
+    <ellipse cx="205" cy="265" rx="15" ry="6" fill="#f43f5e" opacity="0.4" />
+    <ellipse cx="307" cy="265" rx="15" ry="6" fill="#f43f5e" opacity="0.4" />
+
+    <!-- Left Eye -->
+    <g id="leftEye">
+      <path d="M195 230 C205 220, 225 220, 235 232" stroke="#1e293b" stroke-width="4.5" stroke-linecap="round" fill="none" />
+      <ellipse cx="215" cy="242" rx="12" ry="16" fill="url(#eyeGrad)" />
+      <circle cx="212" cy="238" r="4.5" fill="#ffffff" />
+      <circle cx="219" cy="248" r="2.5" fill="#ffffff" />
+    </g>
+
+    <!-- Right Eye -->
+    <g id="rightEye">
+      <path d="M277 232 C287 220, 307 220, 317 230" stroke="#1e293b" stroke-width="4.5" stroke-linecap="round" fill="none" />
+      <ellipse cx="297" cy="242" rx="12" ry="16" fill="url(#eyeGrad)" />
+      <circle cx="294" cy="238" r="4.5" fill="#ffffff" />
+      <circle cx="301" cy="248" r="2.5" fill="#ffffff" />
+    </g>
+
+    <!-- Nose & Mouth -->
+    <circle cx="256" cy="275" r="1.5" fill="#db2777" />
+    <path d="M250 295 Q256 302 262 295" stroke="#db2777" stroke-width="2.5" stroke-linecap="round" fill="none" />
+
+    <!-- Detailed Anime Hair Bangs & Strands (Fine Edges to test segmentation & upscaler) -->
+    <path d="M170 200 C150 140, 200 80, 256 80 C320 80, 360 140, 342 200 C325 180, 310 160, 290 190 C280 150, 260 140, 250 200 C240 160, 220 160, 215 210 C200 170, 185 180, 170 200 Z" fill="url(#hairGrad)" />
+    <!-- Fine Hair Strands -->
+    <path d="M245 100 C250 50, 270 40, 280 60 C270 70, 260 80, 255 105 Z" fill="#06b6d4" /> <!-- Ahoge strand -->
+    <path d="M190 180 C180 230, 185 270, 175 300 C185 270, 195 240, 195 200 Z" fill="#3b82f6" />
+    <path d="M322 180 C332 230, 327 270, 337 300 C327 270, 317 240, 317 200 Z" fill="#3b82f6" />
+    <path d="M225 180 C230 220, 235 240, 230 260 C235 240, 240 210, 235 185 Z" fill="#6366f1" />
+    <path d="M285 180 C280 220, 275 240, 280 260 C275 240, 270 210, 275 185 Z" fill="#6366f1" />
+  </g>
+</svg>
