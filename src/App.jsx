@@ -30,9 +30,12 @@ import { useTheme } from './hooks/useTheme';
 import { loadImage, getImageDataFromImage, imageDataToCanvas, downsampleCanvas } from './utils/canvasUtils';
 import { downloadAndCacheModel, isModelCached } from './utils/modelCache';
 
-// Default model URLs (Public Hugging Face CDN)
-const DEFAULT_UPSCALER_URL = 'https://huggingface.co/OpenSynthetics/real-esrgan-anime/resolve/main/RealESRGAN_x4plus_anime_6B.onnx';
-const DEFAULT_BGREMOVER_URL = 'https://huggingface.co/SkyTNT/anime-segmentation/resolve/main/isnet-anime.onnx';
+// Default public ONNX models with CORS support
+const DEFAULT_UPSCALER_URL = 'https://huggingface.co/Heliosoph/realesrgan-onnx/resolve/main/realesr-general-x4v3.onnx';
+const FALLBACK_UPSCALER_URL = 'https://huggingface.co/anakhiu/realesrgan-onnx/resolve/main/realesrgan_x4plus.onnx';
+
+const DEFAULT_BGREMOVER_URL = 'https://huggingface.co/briaai/RMBG-1.4/resolve/main/onnx/model_quantized.onnx';
+const FALLBACK_BGREMOVER_URL = 'https://huggingface.co/skytnt/anime-seg/resolve/main/isnetis.onnx';
 
 export default function App() {
   const { theme, toggleTheme } = useTheme();
@@ -151,10 +154,15 @@ export default function App() {
   const ensureModelReady = async (modelType) => {
     const isUpscaler = modelType === 'upscale';
     const worker = isUpscaler ? upscalerWorkerRef.current : bgWorkerRef.current;
-    const modelUrl = isUpscaler ? settings.upscalerUrl : settings.bgRemoverUrl;
-    const modelFileName = isUpscaler ? 'RealESRGAN_x4plus_anime_6B.onnx' : 'isnet-anime.onnx';
+    
+    // Primary and fallback candidate URLs
+    const candidateUrls = isUpscaler 
+      ? [settings.upscalerUrl, DEFAULT_UPSCALER_URL, FALLBACK_UPSCALER_URL].filter(Boolean)
+      : [settings.bgRemoverUrl, DEFAULT_BGREMOVER_URL, FALLBACK_BGREMOVER_URL].filter(Boolean);
 
-    const cached = await isModelCached(modelUrl);
+    const modelFileName = isUpscaler ? 'realesrgan_x4.onnx' : 'rmbg_quantized.onnx';
+
+    const cached = await isModelCached(candidateUrls[0]);
     if (!cached) {
       setModelDownloadState({
         isOpen: true,
@@ -163,7 +171,7 @@ export default function App() {
       });
     }
 
-    const buffer = await downloadAndCacheModel(modelUrl, (progress) => {
+    const buffer = await downloadAndCacheModel(candidateUrls, (progress) => {
       setModelDownloadState(prev => ({
         ...prev,
         isOpen: true,
@@ -190,7 +198,7 @@ export default function App() {
         type: 'LOAD_MODEL',
         payload: {
           modelBuffer: buffer,
-          modelUrl,
+          modelUrl: candidateUrls[0],
           provider: settings.provider,
         },
       });

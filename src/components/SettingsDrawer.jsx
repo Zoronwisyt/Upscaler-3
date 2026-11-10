@@ -124,7 +124,7 @@ export function SettingsDrawer({
           <div className="space-y-3">
             <label className="text-xs font-semibold text-slate-300">Model Weights URLs</label>
             <div>
-              <span className="text-[11px] text-slate-400 block mb-1">Real-ESRGAN Anime ONNX:</span>
+              <span className="text-[11px] text-slate-400 block mb-1">Real-ESRGAN Neural Upscaler ONNX:</span>
               <input
                 type="text"
                 value={upscalerUrl}
@@ -134,7 +134,7 @@ export function SettingsDrawer({
             </div>
 
             <div>
-              <span className="text-[11px] text-slate-400 block mb-1">IS-Net Anime Segmentation ONNX:</span>
+              <span className="text-[11px] text-slate-400 block mb-1">Neural Background Removal ONNX:</span>
               <input
                 type="text"
                 value={bgRemoverUrl}
