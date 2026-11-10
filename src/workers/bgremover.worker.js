@@ -1,8 +1,21 @@
 import * as ort from 'onnxruntime-web/webgpu';
 import { refineAlphaMask } from '../utils/matting';
 
-// Configure ONNX Runtime Web - exact matching version 1.31.1
-ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.31.1/dist/';
+// Resolve same-origin assets folder relative to this worker script
+const getWasmPath = () => {
+  try {
+    if (typeof self !== 'undefined' && self.location && self.location.href) {
+      const idx = self.location.href.lastIndexOf('/');
+      if (idx !== -1) {
+        return self.location.href.substring(0, idx + 1);
+      }
+    }
+  } catch (e) {}
+  return './';
+};
+
+// Configure ONNX Runtime Web to load same-origin wasm/mjs assets
+ort.env.wasm.wasmPaths = getWasmPath();
 ort.env.wasm.numThreads = (typeof crossOriginIsolated !== 'undefined' && crossOriginIsolated) ? Math.min(4, navigator.hardwareConcurrency || 4) : 1;
 
 let session = null;
@@ -45,7 +58,7 @@ self.onmessage = async (e) => {
         });
         self.postMessage({ type: 'MODEL_LOADED', success: true, fallback: true });
       } catch (fallbackErr) {
-        self.postMessage({ type: 'ERROR', error: fallbackErr.message || err.message || 'Failed to initialize background removal model.' });
+        self.postMessage({ type: 'ERROR', error: err.message || fallbackErr.message || 'Failed to initialize background removal model.' });
       }
     }
     return;
