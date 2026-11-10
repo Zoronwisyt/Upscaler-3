@@ -1,7 +1,7 @@
 import * as ort from 'onnxruntime-web/webgpu';
 
-// Configure ONNX Runtime Web
-ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/';
+// Configure ONNX Runtime Web - exact matching version 1.31.1
+ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.31.1/dist/';
 // Default to 1 thread for WASM so SharedArrayBuffer is not strictly required on GitHub Pages
 ort.env.wasm.numThreads = (typeof crossOriginIsolated !== 'undefined' && crossOriginIsolated) ? Math.min(4, navigator.hardwareConcurrency || 4) : 1;
 
@@ -22,7 +22,8 @@ self.onmessage = async (e) => {
       const { modelBuffer, modelUrl, provider = 'webgpu' } = payload;
       isCancelled = false;
 
-      const providers = provider === 'webgpu' ? ['webgpu', 'wasm'] : ['wasm'];
+      const hasGpu = typeof navigator !== 'undefined' && !!navigator.gpu;
+      const providers = (provider === 'webgpu' && hasGpu) ? ['webgpu', 'wasm'] : ['wasm'];
 
       self.postMessage({ type: 'STATUS', status: 'initializing_model', message: `Initializing ONNX Runtime (${providers[0]})...` });
 
