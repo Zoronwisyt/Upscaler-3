@@ -1,4 +1,4 @@
-import * as ort from 'onnxruntime-web';
+import * as ort from 'onnxruntime-web/webgpu';
 import { refineAlphaMask } from '../utils/matting';
 
 // Configure ONNX Runtime Web
@@ -26,7 +26,9 @@ self.onmessage = async (e) => {
 
       self.postMessage({ type: 'STATUS', status: 'initializing_model', message: `Initializing Segmentation Model (${providers[0]})...` });
 
-      session = await ort.InferenceSession.create(modelBuffer, {
+      const byteData = modelBuffer instanceof Uint8Array ? modelBuffer : new Uint8Array(modelBuffer);
+
+      session = await ort.InferenceSession.create(byteData, {
         executionProviders: providers,
         graphOptimizationLevel: 'all',
       });
@@ -36,12 +38,13 @@ self.onmessage = async (e) => {
     } catch (err) {
       console.warn('Segmentation model WebGPU failed, attempting WASM fallback:', err);
       try {
-        session = await ort.InferenceSession.create(payload.modelBuffer, {
+        const fallbackBytes = payload.modelBuffer instanceof Uint8Array ? payload.modelBuffer : new Uint8Array(payload.modelBuffer);
+        session = await ort.InferenceSession.create(fallbackBytes, {
           executionProviders: ['wasm'],
         });
         self.postMessage({ type: 'MODEL_LOADED', success: true, fallback: true });
       } catch (fallbackErr) {
-        self.postMessage({ type: 'ERROR', error: fallbackErr.message || 'Failed to initialize background removal model.' });
+        self.postMessage({ type: 'ERROR', error: fallbackErr.message || err.message || 'Failed to initialize background removal model.' });
       }
     }
     return;

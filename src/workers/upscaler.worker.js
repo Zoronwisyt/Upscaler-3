@@ -1,4 +1,4 @@
-import * as ort from 'onnxruntime-web';
+import * as ort from 'onnxruntime-web/webgpu';
 
 // Configure ONNX Runtime Web
 ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/';
@@ -26,8 +26,10 @@ self.onmessage = async (e) => {
 
       self.postMessage({ type: 'STATUS', status: 'initializing_model', message: `Initializing ONNX Runtime (${providers[0]})...` });
 
-      // Create session
-      session = await ort.InferenceSession.create(modelBuffer, {
+      const byteData = modelBuffer instanceof Uint8Array ? modelBuffer : new Uint8Array(modelBuffer);
+
+      // Create session with preferred provider (webgpu -> wasm fallback)
+      session = await ort.InferenceSession.create(byteData, {
         executionProviders: providers,
         graphOptimizationLevel: 'all',
       });
@@ -37,12 +39,13 @@ self.onmessage = async (e) => {
     } catch (err) {
       console.warn('Failed to load with preferred provider, attempting WASM fallback:', err);
       try {
-        session = await ort.InferenceSession.create(payload.modelBuffer, {
+        const fallbackBytes = payload.modelBuffer instanceof Uint8Array ? payload.modelBuffer : new Uint8Array(payload.modelBuffer);
+        session = await ort.InferenceSession.create(fallbackBytes, {
           executionProviders: ['wasm'],
         });
         self.postMessage({ type: 'MODEL_LOADED', success: true, fallback: true });
       } catch (fallbackErr) {
-        self.postMessage({ type: 'ERROR', error: fallbackErr.message || 'Failed to initialize upscaler model.' });
+        self.postMessage({ type: 'ERROR', error: fallbackErr.message || err.message || 'Failed to initialize upscaler model.' });
       }
     }
     return;
