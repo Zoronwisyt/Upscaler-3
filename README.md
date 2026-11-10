@@ -144,10 +144,10 @@ AnimeForge supports two convenient ways to load ONNX model files:
 
 ### Option A: On-Demand Hugging Face CDN (Default)
 By default, the application streams models directly from public Hugging Face mirrors:
-- **Real-ESRGAN Anime**: `https://huggingface.co/OpenSynthetics/real-esrgan-anime/resolve/main/RealESRGAN_x4plus_anime_6B.onnx` (~67 MB)
-- **IS-Net Anime**: `https://huggingface.co/SkyTNT/anime-segmentation/resolve/main/isnet-anime.onnx` (~88 MB)
+- **Real-ESRGAN Upscaler**: `https://huggingface.co/Heliosoph/realesrgan-onnx/resolve/main/realesr-general-x4v3.onnx` (~4.8 MB) with fallback to `anakhiu/realesrgan-onnx` (~67 MB)
+- **Neural Background Remover**: `https://huggingface.co/briaai/RMBG-1.4/resolve/main/onnx/model_quantized.onnx` (~44 MB) with fallback to `skytnt/anime-seg` (~176 MB)
 
-Because files are under 100 MB and downloaded with chunked streaming, they cache permanently in the client's browser `CacheStorage` after the first download.
+Because files are downloaded with chunked streaming and open CORS, they cache permanently in the client's browser `CacheStorage` after the first download.
 
 ### Option B: Self-Host Inside Repository (Git LFS)
 If you prefer to host models locally inside your repository:
@@ -159,8 +159,8 @@ If you prefer to host models locally inside your repository:
    ```
 2. Download the `.onnx` files and save them to `public/models/`.
 3. In the AnimeForge app, open **Settings (gear icon)** and point the model URLs to:
-   - `./models/RealESRGAN_x4plus_anime_6B.onnx`
-   - `./models/isnet-anime.onnx`
+   - `./models/realesr-general-x4v3.onnx`
+   - `./models/model_quantized.onnx`
 
 ---
 
