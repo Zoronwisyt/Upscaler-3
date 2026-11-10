@@ -18,9 +18,30 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" crossorigin href="./assets/index.css">
   </head>
   <body class="bg-[#0b0f19] text-slate-100 min-h-screen antialiased selection:bg-purple-500 selection:text-white">
     <div id="root"></div>
+
+    <!-- Development entry point for Vite -->
     <script type="module" src="./src/main.jsx"></script>
+
+    <!-- Resilient Static Production Fallback:
+         If hosted on static GitHub Pages without Vite build step,
+         this immediately mounts the bundled production app. -->
+    <script type="module">
+      const checkAndMount = () => {
+        const root = document.getElementById('root');
+        if (root && root.children.length === 0) {
+          import('./assets/index.js').catch(() => {});
+        }
+      };
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', checkAndMount);
+      } else {
+        checkAndMount();
+      }
+      setTimeout(checkAndMount, 200);
+    </script>
   </body>
 </html>
