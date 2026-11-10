@@ -28,6 +28,31 @@
 
     <!-- Resilient Static Production Fallback:
          If hosted on static GitHub Pages without Vite build step,
-         this immediately mounts the bundled production app. -->
+         this mounts the pre-bundled production app. -->
+    <script>
+      (function() {
+        function checkAndMount() {
+          var root = document.getElementById('root');
+          if (root && root.childElementCount === 0) {
+            if (!document.querySelector('link[href*="index.css"]')) {
+              var link = document.createElement('link');
+              link.rel = 'stylesheet';
+              link.href = './assets/index.css?v=2';
+              document.head.appendChild(link);
+            }
+            var s = document.createElement('script');
+            s.type = 'module';
+            s.crossOrigin = 'anonymous';
+            s.src = './assets/index.js?v=2';
+            document.body.appendChild(s);
+          }
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', function() { setTimeout(checkAndMount, 300); });
+        } else {
+          setTimeout(checkAndMount, 300);
+        }
+      })();
+    </script>
   </body>
 </html>
